@@ -123,7 +123,7 @@ function etaadPixelView(path){
  try{if(window.__etaadPixelInstalled)window.ttq.instance(etaadPixelId).page()}catch(_){}
  var match=path.match(/^\/products\/([a-z0-9-]+)\/$/),p=match&&Y2(match[1]);
  if(p)etaadPixelTrack("ViewContent",etaadPixelProduct(p,1));
- if(path==="/checkout/"&&K_().items.length)etaadPixelTrack("InitiateCheckout",{});
+ if(path==="/checkout/"&&K_().items.length){var lines=K_().items.map(function(line){var product=Y2(line.id);return product?etaadPixelProduct(product,line.quantity):null}).filter(Boolean);var payload={content_type:"product",contents:lines.map(function(line){return line.contents[0]})};if(lines.every(function(line){return Number.isFinite(line.value)})){payload.currency="KWD";payload.value=lines.reduce(function(total,line){return total+line.value},0)}etaadPixelTrack("InitiateCheckout",payload);}
 }
 
 function nO(){let e=(0,up.useSyncExternalStore)(Ac,()=>Tc().path),{title:t,node:n}=bL(e);return(0,up.useEffect)(()=>{etaadPixelView(e);document.title=t===K.fullName?t:`${t} | \u0639\u062A\u0627\u062F`},[t,e]),(0,tt.jsx)(kI,{children:(0,tt.jsx)(nI,{children:(0,tt.jsxs)(pI,{products:W2(),maxQuantity:K.maxQuantityPerItem,children:[(0,tt.jsx)(PI,{}),(0,tt.jsx)("main",{id:"main",className:"flex-1",children:n}),(0,tt.jsx)(VI,{})]})})})}var iO=O(D(),1);C2();etaadPixelBoot();(0,rO.createRoot)(document.getElementById("root")).render((0,iO.jsx)(nO,{}));})();
