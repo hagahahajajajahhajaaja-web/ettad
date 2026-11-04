@@ -70,6 +70,8 @@ export function OrdersPanel({
   const [arrived, setArrived] = useState(0);
   const latestSeen = useRef<number | null>(null);
   const sound = useAlertSound();
+  // play ثابت (useCallback)، أما كائن sound فيتجدد مع كل عرض — الاعتماد عليه يعيد التحميل بلا توقف
+  const playSound = sound.play;
 
   const load = useCallback(async () => {
     try {
@@ -81,13 +83,13 @@ export function OrdersPanel({
       if (latestSeen.current !== null && newest > latestSeen.current) {
         const fresh = data.orders.filter((o) => o.createdAt > latestSeen.current!).length;
         setArrived((n) => n + fresh);
-        sound.play();
+        playSound();
       }
       if (latestSeen.current === null || newest > latestSeen.current) latestSeen.current = newest;
     } catch (error) {
       onError(error);
     }
-  }, [filter, submittedQuery, onError, onNewCount, sound]);
+  }, [filter, submittedQuery, onError, onNewCount, playSound]);
 
   // متابعة الطلبات الجديدة: تحميل فوري ثم كل 20 ثانية أثناء ظهور الصفحة
   useEffect(() => {

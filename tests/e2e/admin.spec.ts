@@ -17,6 +17,21 @@ test.describe('لوحة التحكم', () => {
     await expect(page.getByRole('tab', { name: /الطلبات/ })).toHaveCount(0);
   });
 
+  test('قائمة الطلبات تُحدَّث كل 20 ثانية فقط، لا طلبات متتالية بلا توقف', async ({ page }) => {
+    let calls = 0;
+    page.on('request', (r) => {
+      if (new URL(r.url()).pathname.startsWith('/api/admin/orders')) calls++;
+    });
+    await page.goto('/admin/');
+    await page.getByLabel('مفتاح الدخول').fill(ADMIN_KEY);
+    await page.getByRole('button', { name: 'دخول' }).click();
+    await expect(page.getByRole('tab', { name: /الطلبات/ })).toBeVisible();
+    await expect.poll(() => calls).toBeGreaterThan(0);
+    const afterFirstLoad = calls;
+    await page.waitForTimeout(3000);
+    expect(calls - afterFirstLoad).toBeLessThanOrEqual(1);
+  });
+
   test('تسعير منتج من اللوحة يظهر في المتجر، والطلب يصل للوحة وتتغير حالته', async ({ page, context }) => {
     const errors = trackErrors(page);
     await page.goto('/admin/');
