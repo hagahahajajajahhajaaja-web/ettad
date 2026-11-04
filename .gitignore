@@ -1,0 +1,27 @@
+# dependencies
+node_modules/
+
+# next.js
+.next/
+out/
+out-e2e/
+preview-out/
+next-env.d.ts
+*.tsbuildinfo
+
+# testing
+test-results/
+playwright-report/
+blob-report/
+coverage/
+screenshots/
+
+# env (never commit real values)
+.env
+.env.*
+!.env.example
+
+# misc
+.DS_Store
+*.log
+.scratch/

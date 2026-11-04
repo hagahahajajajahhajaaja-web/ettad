@@ -1,0 +1,204 @@
+{
+  "boss-12v-tire-compressor": [
+    {
+      "base": "/images/products/boss-12v-tire-compressor/01",
+      "width": 1027,
+      "height": 684,
+      "widths": [
+        480,
+        960,
+        1027
+      ],
+      "og": "/images/products/boss-12v-tire-compressor/01-og.jpg"
+    }
+  ],
+  "boss-239-7-cordless-water-gun": [
+    {
+      "base": "/images/products/boss-239-7-cordless-water-gun/01",
+      "width": 1290,
+      "height": 1156,
+      "widths": [
+        480,
+        960,
+        1290
+      ],
+      "og": "/images/products/boss-239-7-cordless-water-gun/01-og.jpg"
+    },
+    {
+      "base": "/images/products/boss-239-7-cordless-water-gun/02",
+      "width": 1061,
+      "height": 806,
+      "widths": [
+        480,
+        960,
+        1061
+      ],
+      "og": "/images/products/boss-239-7-cordless-water-gun/02-og.jpg"
+    }
+  ],
+  "boss-94pc-socket-wrench-set": [
+    {
+      "base": "/images/products/boss-94pc-socket-wrench-set/01",
+      "width": 558,
+      "height": 800,
+      "widths": [
+        480,
+        558
+      ],
+      "og": "/images/products/boss-94pc-socket-wrench-set/01-og.jpg"
+    },
+    {
+      "base": "/images/products/boss-94pc-socket-wrench-set/02",
+      "width": 1144,
+      "height": 659,
+      "widths": [
+        480,
+        960,
+        1144
+      ],
+      "og": "/images/products/boss-94pc-socket-wrench-set/02-og.jpg"
+    }
+  ],
+  "boss-bs-2070-pressure-washer": [
+    {
+      "base": "/images/products/boss-bs-2070-pressure-washer/01",
+      "width": 600,
+      "height": 600,
+      "widths": [
+        480,
+        600
+      ],
+      "og": "/images/products/boss-bs-2070-pressure-washer/01-og.jpg"
+    },
+    {
+      "base": "/images/products/boss-bs-2070-pressure-washer/02",
+      "width": 1095,
+      "height": 754,
+      "widths": [
+        480,
+        960,
+        1095
+      ],
+      "og": "/images/products/boss-bs-2070-pressure-washer/02-og.jpg"
+    },
+    {
+      "base": "/images/products/boss-bs-2070-pressure-washer/03",
+      "width": 600,
+      "height": 600,
+      "widths": [
+        480,
+        600
+      ],
+      "og": "/images/products/boss-bs-2070-pressure-washer/03-og.jpg"
+    },
+    {
+      "base": "/images/products/boss-bs-2070-pressure-washer/04",
+      "width": 600,
+      "height": 600,
+      "widths": [
+        480,
+        600
+      ],
+      "og": "/images/products/boss-bs-2070-pressure-washer/04-og.jpg"
+    }
+  ],
+  "boss-bs-300f-pressure-washer": [
+    {
+      "base": "/images/products/boss-bs-300f-pressure-washer/01",
+      "width": 770,
+      "height": 924,
+      "widths": [
+        480,
+        770
+      ],
+      "og": "/images/products/boss-bs-300f-pressure-washer/01-og.jpg"
+    }
+  ],
+  "boss-cordless-impact-wrench-kit": [
+    {
+      "base": "/images/products/boss-cordless-impact-wrench-kit/01",
+      "width": 1290,
+      "height": 763,
+      "widths": [
+        480,
+        960,
+        1290
+      ],
+      "og": "/images/products/boss-cordless-impact-wrench-kit/01-og.jpg"
+    }
+  ],
+  "gs-lztop-94pc-socket-set": [
+    {
+      "base": "/images/products/gs-lztop-94pc-socket-set/01",
+      "width": 1083,
+      "height": 767,
+      "widths": [
+        480,
+        960,
+        1083
+      ],
+      "og": "/images/products/gs-lztop-94pc-socket-set/01-og.jpg"
+    }
+  ],
+  "gulfik-brushless-drill-kit": [
+    {
+      "base": "/images/products/gulfik-brushless-drill-kit/01",
+      "width": 1290,
+      "height": 1653,
+      "widths": [
+        480,
+        960,
+        1290
+      ],
+      "og": "/images/products/gulfik-brushless-drill-kit/01-og.jpg"
+    }
+  ],
+  "gulfik-brushless-impact-wrench-kit": [
+    {
+      "base": "/images/products/gulfik-brushless-impact-wrench-kit/01",
+      "width": 1074,
+      "height": 726,
+      "widths": [
+        480,
+        960,
+        1074
+      ],
+      "og": "/images/products/gulfik-brushless-impact-wrench-kit/01-og.jpg"
+    },
+    {
+      "base": "/images/products/gulfik-brushless-impact-wrench-kit/02",
+      "width": 1086,
+      "height": 1362,
+      "widths": [
+        480,
+        960,
+        1086
+      ],
+      "og": "/images/products/gulfik-brushless-impact-wrench-kit/02-og.jpg"
+    }
+  ],
+  "rolling-tool-case-kit": [
+    {
+      "base": "/images/products/rolling-tool-case-kit/01",
+      "width": 1000,
+      "height": 1000,
+      "widths": [
+        480,
+        960,
+        1000
+      ],
+      "og": "/images/products/rolling-tool-case-kit/01-og.jpg"
+    },
+    {
+      "base": "/images/products/rolling-tool-case-kit/02",
+      "width": 1000,
+      "height": 1000,
+      "widths": [
+        480,
+        960,
+        1000
+      ],
+      "og": "/images/products/rolling-tool-case-kit/02-og.jpg"
+    }
+  ]
+}
