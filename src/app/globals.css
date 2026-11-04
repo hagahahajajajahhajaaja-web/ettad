@@ -1,0 +1,172 @@
+@import 'tailwindcss';
+
+/*
+ * عتاد | ETAAD — نظام التصميم
+ * فحمي #111820 · برتقالي صناعي #F58220 · أبيض دافئ #F7F7F5 · رمادي معدني #69737D
+ * القاعدة: حدود رفيعة وزوايا مشطوفة بدل الظلال والتدرجات.
+ */
+@theme {
+  --color-ink: #111820;
+  --color-ink-800: #19222c;
+  --color-ink-700: #242e39;
+  --color-ink-600: #333e4a;
+  --color-orange: #f58220;
+  --color-orange-600: #e2700e;
+  --color-orange-ink: #a24f00;
+  --color-orange-50: #fdf0e4;
+  --color-paper: #f7f7f5;
+  --color-plate: #ecedea;
+  --color-steel: #69737d;
+  --color-steel-700: #4d5660;
+  --color-steel-300: #aab1b8;
+  --color-line: #dcdfe2;
+  --color-success: #1f6f43;
+  --color-success-50: #e8f3ec;
+  --color-danger: #b42318;
+  --color-danger-50: #fdecea;
+
+  --font-sans: var(--font-cairo-ar), var(--font-cairo-latin), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+
+  --breakpoint-xs: 25rem;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    scroll-padding-top: 8rem;
+  }
+  body {
+    @apply bg-paper text-ink font-sans antialiased;
+    -webkit-tap-highlight-color: transparent;
+    font-feature-settings: 'kern';
+  }
+  ::selection {
+    background: var(--color-orange);
+    color: var(--color-ink);
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-orange);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+  /* منع تكبير iOS التلقائي عند التركيز على الحقول */
+  input,
+  select,
+  textarea {
+    font-size: max(16px, 1em);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* زاوية مشطوفة — مستوحاة من اللوحات المعدنية المقطوعة */
+@utility chamfer {
+  clip-path: polygon(14px 0, 100% 0, 100% 100%, 0 100%, 0 14px);
+}
+@utility chamfer-sm {
+  clip-path: polygon(8px 0, 100% 0, 100% 100%, 0 100%, 0 8px);
+}
+@utility chamfer-end {
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
+}
+
+/* شريط تحذير صناعي — يُستخدم باعتدال */
+@utility hazard {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--color-orange) 0 10px,
+    var(--color-ink) 10px 20px
+  );
+}
+
+/* شبكة مخطط هندسي خفيفة */
+@utility blueprint {
+  background-image:
+    linear-gradient(to right, rgb(105 115 125 / 0.16) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(105 115 125 / 0.16) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* تدريج مسطرة القياس */
+@utility ruler {
+  background-image:
+    repeating-linear-gradient(to left, currentColor 0 1px, transparent 1px 8px),
+    repeating-linear-gradient(to left, currentColor 0 1px, transparent 1px 40px);
+  background-size:
+    100% 6px,
+    100% 12px;
+  background-position:
+    top right,
+    top right;
+  background-repeat: no-repeat;
+}
+
+@utility ltr-isolate {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility safe-bottom {
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+}
+
+@utility container-etaad {
+  @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+}
+@utility btn {
+  @apply inline-flex min-h-12 select-none items-center justify-center gap-2 px-5 text-base font-bold transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50;
+}
+@utility btn-primary {
+  @apply btn chamfer-sm bg-orange text-ink hover:bg-orange-600 active:bg-orange-600;
+}
+@utility btn-dark {
+  @apply btn chamfer-sm bg-ink text-paper hover:bg-ink-700;
+}
+@utility btn-outline {
+  @apply btn border-2 border-ink bg-transparent text-ink hover:bg-ink hover:text-paper;
+}
+@utility btn-outline-light {
+  @apply btn border-2 border-paper/70 bg-transparent text-paper hover:border-paper hover:bg-paper hover:text-ink;
+}
+@utility btn-ghost {
+  @apply btn px-3 text-steel-700 hover:bg-plate hover:text-ink;
+}
+/* عنوان صغير فوق العناوين — بدون تباعد أحرف لأن التباعد يكسر اتصال الحروف العربية */
+@utility eyebrow {
+  @apply text-sm font-bold text-steel-700;
+}
+/* للنصوص اللاتينية فقط (موديلات، ETAAD) */
+@utility latin-caps {
+  @apply font-mono tracking-[0.18em] uppercase;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+@utility field-label {
+  @apply mb-1.5 block text-sm font-bold text-ink;
+}
+@utility field-input {
+  @apply block min-h-12 w-full border-2 border-line bg-white px-3.5 py-2.5 text-ink transition-colors placeholder:text-steel focus:border-ink focus:outline-none aria-[invalid=true]:border-danger;
+}
+@utility field-error {
+  @apply mt-1.5 flex items-start gap-1.5 text-sm font-semibold text-danger;
+}
+@utility field-hint {
+  @apply mt-1.5 text-sm text-steel-700;
+}
