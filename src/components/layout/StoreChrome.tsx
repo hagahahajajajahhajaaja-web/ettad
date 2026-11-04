@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { TikTokPixel } from '@/components/analytics/TikTokPixel';
 import { CartProvider } from '@/components/cart/CartProvider';
 import { LiveCatalogProvider } from '@/components/catalog/LiveCatalog';
 import { SiteFooter } from '@/components/layout/SiteFooter';
@@ -16,6 +17,7 @@ export function StoreChrome({ children }: { children: ReactNode }) {
           {children}
         </main>
         <SiteFooter />
+        <TikTokPixel />
       </CartProvider>
     </LiveCatalogProvider>
   );

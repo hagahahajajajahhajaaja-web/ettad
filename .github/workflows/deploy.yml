@@ -1,0 +1,123 @@
+name: Deploy to etaadq8.com
+
+# ينشر المتجر ولوحة التحكم على مشروع Cloudflare Pages الحالي المربوط بـ etaadq8.com.
+# يعمل تلقائيًا عند كل دمج في main، أو يدويًا من Actions ← Deploy to etaadq8.com ← Run workflow.
+#
+# أسرار المستودع المطلوبة (Settings ← Secrets and variables ← Actions):
+#   CLOUDFLARE_API_TOKEN   رمز Cloudflare بصلاحيات: Cloudflare Pages: Edit + D1: Edit
+#   ADMIN_KEY              مفتاح دخول لوحة التحكم /admin (20 حرفًا أو أكثر)
+# اختياري: CLOUDFLARE_ACCOUNT_ID (يُكتشف تلقائيًا إذا لم يُضبط).
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+env:
+  SITE_DOMAIN: etaadq8.com
+  D1_NAME: etaad
+  D1_ID: 77dc4656-7a8c-4e21-95f2-ceaf372f7a60
+  WRANGLER: npx --yes wrangler@4.152.0
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
+      ACCOUNT_ID_SECRET: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - name: Check secrets
+        run: |
+          missing=0
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then echo "::error::أضف السر CLOUDFLARE_API_TOKEN (انظر docs/DEPLOYMENT.md)"; missing=1; fi
+          if [ "${#ADMIN_KEY}" -lt 20 ]; then echo "::error::أضف السر ADMIN_KEY بطول 20 حرفًا أو أكثر (انظر docs/DEPLOYMENT.md)"; missing=1; fi
+          exit $missing
+
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Unit tests
+        run: npm test
+      - name: Build (static pages + out/_worker.js)
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SITE_URL: https://${{ env.SITE_DOMAIN }}
+
+      - name: Find the Cloudflare Pages project serving etaadq8.com
+        id: cf
+        run: |
+          api() { curl -fsS -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "https://api.cloudflare.com/client/v4/$1"; }
+          account="$ACCOUNT_ID_SECRET"
+          if [ -z "$account" ]; then
+            account=$(api accounts | jq -r '.result[0].id // empty')
+          fi
+          if [ -z "$account" ]; then echo "::error::الرمز لا يصل لأي حساب Cloudflare. تأكد من صلاحيات الرمز."; exit 1; fi
+          projects=$(api "accounts/$account/pages/projects?per_page=100")
+          project=$(jq -r --arg d "$SITE_DOMAIN" '[.result[] | select((.domains // []) | index($d))][0].name // empty' <<<"$projects")
+          if [ -z "$project" ]; then
+            echo "::error::لم أجد مشروع Pages مربوطًا بـ $SITE_DOMAIN. المشاريع الموجودة: $(jq -r '[.result[].name] | join(", ")' <<<"$projects")"
+            exit 1
+          fi
+          branch=$(jq -r --arg p "$project" '.result[] | select(.name == $p) | .production_branch // "main"' <<<"$projects")
+          echo "Project: $project (production branch: $branch)"
+          echo "::add-mask::$account"
+          {
+            echo "account=$account"
+            echo "project=$project"
+            echo "branch=$branch"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Write Pages config (D1 binding ETAAD_DB)
+        run: |
+          cat > wrangler.toml <<EOF
+          name = "${{ steps.cf.outputs.project }}"
+          pages_build_output_dir = "./out"
+          compatibility_date = "2026-09-01"
+
+          [[d1_databases]]
+          binding = "ETAAD_DB"
+          database_name = "$D1_NAME"
+          database_id = "$D1_ID"
+          EOF
+          cat wrangler.toml
+
+      - name: Set admin key (Cloudflare secret)
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ steps.cf.outputs.account }}
+        run: printf '%s' "$ADMIN_KEY" | $WRANGLER pages secret put ADMIN_KEY --project-name "${{ steps.cf.outputs.project }}"
+
+      - name: Deploy to production
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ steps.cf.outputs.account }}
+        run: >
+          $WRANGLER pages deploy out
+          --project-name "${{ steps.cf.outputs.project }}"
+          --branch "${{ steps.cf.outputs.branch }}"
+          --commit-hash "$GITHUB_SHA"
+          --commit-dirty=true
+
+      - name: Check the live site
+        run: |
+          for i in $(seq 1 12); do
+            body=$(curl -fsS "https://$SITE_DOMAIN/api/health" 2>/dev/null || true)
+            echo "attempt $i: $body"
+            if jq -e '.ok and .database and .adminKey' >/dev/null 2>&1 <<<"$body"; then
+              echo "✓ https://$SITE_DOMAIN يعمل مع قاعدة البيانات ولوحة التحكم: https://$SITE_DOMAIN/admin/"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::error::/api/health لم يؤكد قاعدة البيانات ومفتاح اللوحة بعد النشر"
+          exit 1

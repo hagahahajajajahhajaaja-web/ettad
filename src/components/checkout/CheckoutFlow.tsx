@@ -19,6 +19,7 @@ import {
 import { buildOrderMessage, buildWhatsAppUrl, type OrderLine } from '@/lib/order/whatsapp';
 import { formatKuwaitPhone, normalizeKuwaitPhone } from '@/lib/phone';
 import { newRequestKey, submitOrder, type PlacedOrder } from '@/lib/order/client';
+import { linesPayload, trackPixel } from '@/lib/tiktok-pixel';
 import { paths, shareableProductUrl } from '@/lib/urls';
 
 const DRAFT_KEY = 'etaad.checkout.v1';
@@ -154,6 +155,12 @@ function CheckoutForm({
     });
     setBusy(false);
     if (result.ok) {
+      trackPixel('PlaceAnOrder', {
+        ...linesPayload(
+          result.order.items.map((i) => ({ product: { id: i.id, name: i.name, priceFils: i.unitPriceFils }, quantity: i.quantity })),
+        ),
+        event_id: result.order.id,
+      });
       onPlaced({ ...result.order, contactPhone: normalizeKuwaitPhone(values.phone) ?? '' });
       return;
     }

@@ -11,6 +11,7 @@ import {
   subscribeCart,
   updateCart,
 } from '@/lib/cart/browser-store';
+import { productPayload, trackPixel } from '@/lib/tiktok-pixel';
 
 export type CartLine = { product: ProductSummary; quantity: number };
 
@@ -58,8 +59,13 @@ export function CartProvider({
 
   const add = useCallback(
     (id: string, quantity: number) => {
-      if (!productMap.has(id)) return;
+      const product = productMap.get(id);
+      if (!product) return;
+      const quantityOf = () => getCartSnapshot().items.find((i) => i.id === id)?.quantity ?? 0;
+      const before = quantityOf();
       updateCart((s) => addItem(s, id, quantity, maxQuantity));
+      const added = quantityOf() - before;
+      if (added > 0) trackPixel('AddToCart', productPayload(product, added));
     },
     [productMap, maxQuantity],
   );
