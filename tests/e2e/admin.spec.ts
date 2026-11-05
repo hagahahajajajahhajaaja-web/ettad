@@ -85,6 +85,31 @@ test.describe('لوحة التحكم', () => {
     await page.getByRole('button', { name: /^مؤكد/ }).click();
     await expect(page.getByRole('article', { name: orderId })).toBeVisible();
 
+    // 4ب) الفاتورة: تُنشأ تلقائيًا من الطلب، وتسجيل الدفع منها
+    const paidCard = page.getByRole('article', { name: orderId });
+    await expect(paidCard.locator('header').getByText('غير مدفوع', { exact: true })).toBeVisible();
+    await paidCard.getByRole('button', { name: 'الفاتورة' }).click();
+    const invoice = page.getByRole('dialog', { name: 'فاتورة' });
+    await expect(invoice).toBeVisible();
+    await expect(invoice).toContainText(orderId);
+    await expect(invoice).toContainText('منيرة');
+    await expect(invoice).toContainText('الجابرية، قطعة 4، شارع 12، 30');
+    await expect(invoice.getByRole('row').filter({ hasText: COMPRESSOR.name })).toContainText('17.500 د.ك');
+    await expect(invoice.getByLabel('حالة الدفع: غير مدفوع')).toBeVisible();
+    await expect(invoice.getByRole('link', { name: 'إرسال للعميل واتساب' })).toHaveAttribute('href', /wa\.me\/96566554433\?text=.*%D9%81%D8%A7%D8%AA%D9%88%D8%B1%D8%A9/);
+    await invoice.getByRole('button', { name: 'تسجيل كمدفوع' }).click();
+    await expect(invoice.getByLabel('حالة الدفع: مدفوع')).toBeVisible();
+    // عند الطباعة تظهر الفاتورة فقط، بدون أزرار اللوحة
+    await page.emulateMedia({ media: 'print' });
+    await expect(invoice.getByRole('button', { name: 'طباعة / حفظ PDF' })).toBeHidden();
+    await expect(page.getByRole('tab', { name: /الطلبات/ })).toBeHidden();
+    await expect(invoice.getByRole('heading', { name: 'فاتورة' })).toBeVisible();
+    await page.emulateMedia({ media: 'screen' });
+    await invoice.getByRole('button', { name: 'إغلاق الفاتورة' }).click();
+    await expect(invoice).toBeHidden();
+    await expect(paidCard.locator('header').getByText('مدفوع', { exact: true })).toBeVisible();
+    await expect(paidCard.getByLabel('الدفع')).toHaveValue('paid');
+
     // 5) إعادة السعر المعتمد (17.000) كما كان حتى لا تتأثر بقية الاختبارات
     await page.getByRole('tab', { name: 'الأسعار والتوفر' }).click();
     await row.getByLabel('السعر (د.ك)').fill('17');

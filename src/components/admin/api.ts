@@ -1,6 +1,6 @@
 'use client';
 
-import type { OrderRecord, OrderStatus } from '@/lib/order/status';
+import type { OrderRecord, OrderStatus, PaymentStatus } from '@/lib/order/status';
 import type { Availability } from '@/lib/schema';
 
 export class ApiError extends Error {
@@ -55,7 +55,7 @@ export const adminApi = {
     if (params.q) qs.set('q', params.q);
     return request<{ orders: OrderRecord[]; counts: Partial<Record<OrderStatus, number>>; serverTime: number }>(`/api/admin/orders?${qs}`);
   },
-  updateOrder: (id: string, body: { status?: OrderStatus; adminNote?: string }) =>
+  updateOrder: (id: string, body: { status?: OrderStatus; adminNote?: string; paymentStatus?: PaymentStatus }) =>
     request<{ order: OrderRecord }>(`/api/admin/orders/${encodeURIComponent(id)}`, { method: 'POST', body: JSON.stringify(body) }),
   products: () => request<{ products: AdminProduct[] }>('/api/admin/products'),
   updateProduct: (id: string, body: { priceFils: number | null; availability: Availability }) =>

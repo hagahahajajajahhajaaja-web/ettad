@@ -176,6 +176,43 @@ describe('لوحة التحكم', () => {
     expect((await call(env, '/api/admin/orders', { cookie })).res.status).toBe(401);
   });
 
+  it('الفاتورة: الطلب الجديد غير مدفوع، وتسجيل الدفع وإلغاؤه يحفظ الوقت', async () => {
+    const env = makeEnv();
+    const created = (await call(env, '/api/orders', { body: order() })).data.order;
+    expect(created).not.toHaveProperty('paymentStatus'); // العميل لا يرى حالة الدفع الداخلية
+    const cookie = await adminCookie(env);
+    expect((await call(env, '/api/admin/orders', { cookie })).data.orders[0]).toMatchObject({ paymentStatus: 'unpaid', paidAt: null });
+
+    const paid = await call(env, `/api/admin/orders/${created.id}`, { body: { paymentStatus: 'paid' }, cookie });
+    expect(paid.data.order).toMatchObject({ paymentStatus: 'paid', status: 'new' });
+    expect(typeof paid.data.order.paidAt).toBe('number');
+    expect((await call(env, '/api/admin/orders', { cookie })).data.orders[0]).toMatchObject({ paymentStatus: 'paid', paidAt: paid.data.order.paidAt });
+
+    // حفظ الحالة أو الملاحظة لا يغير وقت الدفع
+    const noted = await call(env, `/api/admin/orders/${created.id}`, { body: { adminNote: 'حوّل بالرابط', paymentStatus: 'paid' }, cookie });
+    expect(noted.data.order.paidAt).toBe(paid.data.order.paidAt);
+
+    const unpaid = await call(env, `/api/admin/orders/${created.id}`, { body: { paymentStatus: 'unpaid' }, cookie });
+    expect(unpaid.data.order).toMatchObject({ paymentStatus: 'unpaid', paidAt: null });
+    expect((await call(env, `/api/admin/orders/${created.id}`, { body: { paymentStatus: 'half' }, cookie })).res.status).toBe(400);
+  });
+
+  it('قاعدة بيانات قديمة بدون أعمدة الدفع تُحدَّث تلقائيًا بدون فقدان الطلبات', async () => {
+    const db = createD1();
+    await db.exec(`CREATE TABLE orders (
+      id TEXT PRIMARY KEY, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL, status TEXT NOT NULL DEFAULT 'new',
+      request_key TEXT NOT NULL UNIQUE, customer_name TEXT NOT NULL, phone TEXT NOT NULL, area TEXT NOT NULL, block TEXT NOT NULL,
+      street TEXT NOT NULL, house TEXT NOT NULL, notes TEXT NOT NULL DEFAULT '', items_json TEXT NOT NULL, item_count INTEGER NOT NULL,
+      total_fils INTEGER, admin_note TEXT NOT NULL DEFAULT '', history_json TEXT NOT NULL DEFAULT '[]')`);
+    await db.exec(`INSERT INTO orders (id, created_at, updated_at, request_key, customer_name, phone, area, block, street, house, items_json, item_count, total_fils)
+      VALUES ('ET-261101-AAAA', 1, 1, 'old-key-123', 'عميل قديم', '51234567', 'حولي', '1', '2', '3', '[]', 0, 1000)`);
+    const env = makeEnv({ ETAAD_DB: db });
+    const cookie = await adminCookie(env);
+    const list = await call(env, '/api/admin/orders', { cookie });
+    expect(list.data.orders[0]).toMatchObject({ id: 'ET-261101-AAAA', customer: { name: 'عميل قديم' }, paymentStatus: 'unpaid', paidAt: null });
+    expect((await call(env, '/api/admin/orders/ET-261101-AAAA', { body: { paymentStatus: 'paid' }, cookie })).data.order.paymentStatus).toBe('paid');
+  });
+
   it('تعديل السعر والتوفر ينعكس على المتجر والطلبات الجديدة', async () => {
     const env = makeEnv();
     const cookie = await adminCookie(env);

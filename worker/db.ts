@@ -26,7 +26,9 @@ const SCHEMA = [
     item_count INTEGER NOT NULL,
     total_fils INTEGER,
     admin_note TEXT NOT NULL DEFAULT '',
-    history_json TEXT NOT NULL DEFAULT '[]'
+    history_json TEXT NOT NULL DEFAULT '[]',
+    payment_status TEXT NOT NULL DEFAULT 'unpaid',
+    paid_at INTEGER
   )`,
   `CREATE INDEX IF NOT EXISTS orders_created_idx ON orders (created_at DESC)`,
   `CREATE INDEX IF NOT EXISTS orders_status_idx ON orders (status, created_at DESC)`,
@@ -42,12 +44,33 @@ const SCHEMA = [
   )`,
 ];
 
+/** أعمدة أُضيفت بعد الإطلاق — تُضاف لقواعد البيانات القديمة تلقائيًا (بدون حذف أي بيانات). */
+const ADDED_ORDER_COLUMNS: [name: string, ddl: string][] = [
+  ['payment_status', `ALTER TABLE orders ADD COLUMN payment_status TEXT NOT NULL DEFAULT 'unpaid'`],
+  ['paid_at', 'ALTER TABLE orders ADD COLUMN paid_at INTEGER'],
+];
+
+async function addMissingColumns(db: D1Database) {
+  const { results } = await db.prepare('PRAGMA table_info(orders)').all<{ name: string }>();
+  const existing = new Set(results.map((c) => c.name));
+  for (const [name, ddl] of ADDED_ORDER_COLUMNS) {
+    if (existing.has(name)) continue;
+    try {
+      await db.prepare(ddl).run();
+    } catch (error) {
+      // طلب متزامن أضاف العمود قبلنا
+      if (!/duplicate column/i.test(String(error))) throw error;
+    }
+  }
+}
+
 const ready = new WeakSet<D1Database>();
 
 export async function getDb(db: D1Database | undefined): Promise<D1Database> {
   if (!db) throw new HttpError(503, 'DB_NOT_BOUND', 'قاعدة البيانات غير مربوطة بعد.');
   if (!ready.has(db)) {
     await db.batch(SCHEMA.map((sql) => db.prepare(sql)));
+    await addMissingColumns(db);
     ready.add(db);
   }
   return db;

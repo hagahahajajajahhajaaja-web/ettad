@@ -12,6 +12,13 @@ const paths = {
   ),
   menu: <path d="M4 7h16M4 12h16M4 17h10" />,
   close: <path d="M6 6l12 12M18 6 6 18" />,
+  printer: (
+    <>
+      <path d="M7 9V3h10v6M7 17H4v-7a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v7h-3" />
+      <path d="M7 14h10v7H7z" />
+    </>
+  ),
+  receipt: <path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3Zm3 5h6M9 12h6M9 16h3" />,
   plus: <path d="M12 5v14M5 12h14" />,
   minus: <path d="M5 12h14" />,
   trash: <path d="M4 7h16M10 11v6m4-6v6M6 7l1 13h10l1-13M9 7V4h6v3" />,

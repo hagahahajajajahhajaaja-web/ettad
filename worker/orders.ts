@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { validateCheckout, type CheckoutData } from '@/lib/order/validation';
 import { buildWhatsAppUrl, ltrInRtl } from '@/lib/order/whatsapp';
-import { isOrderStatus, makeOrderId, type OrderLineRecord, type OrderRecord, type OrderStatus } from '@/lib/order/status';
+import { isOrderStatus, isPaymentStatus, makeOrderId, type OrderLineRecord, type OrderRecord, type OrderStatus } from '@/lib/order/status';
 import { formatKwd } from '@/lib/format';
 import { formatKuwaitPhone } from '@/lib/phone';
 import { sanitizeMultiline } from '@/lib/sanitize';
@@ -38,6 +38,8 @@ type OrderRow = {
   total_fils: number | null;
   admin_note: string;
   history_json: string;
+  payment_status: string;
+  paid_at: number | null;
 };
 
 export function rowToOrder(row: OrderRow): OrderRecord {
@@ -51,6 +53,8 @@ export function rowToOrder(row: OrderRow): OrderRecord {
     itemCount: row.item_count,
     totalFils: row.total_fils,
     adminNote: row.admin_note,
+    paymentStatus: isPaymentStatus(row.payment_status) ? row.payment_status : 'unpaid',
+    paidAt: row.paid_at ?? null,
     history: JSON.parse(row.history_json) as OrderRecord['history'],
   };
 }
@@ -126,7 +130,7 @@ export async function createOrder(db: D1Database, body: unknown, whatsappNumber:
       const order: OrderRecord = {
         id, createdAt: now, updatedAt: now, status: 'new',
         customer: { name: data.name, phone: data.phone, area: data.area, block: data.block, street: data.street, house: data.house, notes: data.notes },
-        items: lines, itemCount, totalFils, adminNote: '', history,
+        items: lines, itemCount, totalFils, adminNote: '', paymentStatus: 'unpaid', paidAt: null, history,
       };
       return { order, created: true, whatsappUrl: buildWhatsAppUrl(whatsappNumber, followupMessage(order)) };
     }
@@ -166,7 +170,7 @@ export async function listOrders(db: D1Database, filter: { status?: string | nul
 
 export async function updateOrder(db: D1Database, id: string, body: unknown, now = Date.now()) {
   const input = z
-    .object({ status: z.string().optional(), adminNote: z.string().max(1000).optional() })
+    .object({ status: z.string().optional(), adminNote: z.string().max(1000).optional(), paymentStatus: z.string().optional() })
     .safeParse(body);
   if (!input.success) throw new HttpError(400, 'INVALID_UPDATE', 'بيانات التحديث غير صالحة.');
   const row = await db.prepare('SELECT * FROM orders WHERE id = ?').bind(id).first<OrderRow>();
@@ -182,9 +186,17 @@ export async function updateOrder(db: D1Database, id: string, body: unknown, now
     }
   }
   const adminNote = input.data.adminNote !== undefined ? sanitizeMultiline(input.data.adminNote, 1000, 20) : order.adminNote;
+  let { paymentStatus, paidAt } = order;
+  if (input.data.paymentStatus !== undefined) {
+    if (!isPaymentStatus(input.data.paymentStatus)) throw new HttpError(400, 'INVALID_PAYMENT_STATUS', 'حالة دفع غير معروفة.');
+    if (input.data.paymentStatus !== paymentStatus) {
+      paymentStatus = input.data.paymentStatus;
+      paidAt = paymentStatus === 'paid' ? now : null;
+    }
+  }
   await db
-    .prepare('UPDATE orders SET status = ?, admin_note = ?, history_json = ?, updated_at = ? WHERE id = ?')
-    .bind(status, adminNote, JSON.stringify(history.slice(-50)), now, id)
+    .prepare('UPDATE orders SET status = ?, admin_note = ?, history_json = ?, payment_status = ?, paid_at = ?, updated_at = ? WHERE id = ?')
+    .bind(status, adminNote, JSON.stringify(history.slice(-50)), paymentStatus, paidAt, now, id)
     .run();
-  return { ...order, status, adminNote, history, updatedAt: now };
+  return { ...order, status, adminNote, history, paymentStatus, paidAt, updatedAt: now };
 }
