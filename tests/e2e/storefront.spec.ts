@@ -241,8 +241,14 @@ test.describe('الصفحات التعريفية والسياسات', () => {
 
     await page.goto('/policies/');
     const returns = page.locator('main').getByRole('link', { name: /الاسترجاع والاستبدال/ });
-    await expect(returns).toContainText('قيد الإعداد');
+    await expect(returns).toContainText('معتمدة');
     await returns.click();
+    await expect(page.getByText('خلال 14 يومًا من تاريخ الاستلام', { exact: false })).toBeVisible();
+
+    await page.goto('/policies/');
+    const warranty = page.locator('main').getByRole('link', { name: /الضمان/ });
+    await expect(warranty).toContainText('قيد الإعداد');
+    await warranty.click();
     await expect(page.getByRole('heading', { name: 'هذه السياسة لم تُعتمد بعد' })).toBeVisible();
 
     await page.goto('/policies/ordering/');
