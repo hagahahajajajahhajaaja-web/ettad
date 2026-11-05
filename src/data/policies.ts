@@ -1,4 +1,4 @@
-import { DELIVERY_REFUSAL_TERM } from '@/config/terms';
+import { CONSUMER_LAW_REFERENCE, DELIVERY_REFUSAL_TERM, RETURN_POLICY_TERMS } from '@/config/terms';
 import type { Policy } from '@/lib/schema';
 
 /**
@@ -87,10 +87,15 @@ export const policies: Policy[] = [
   {
     slug: 'returns',
     title: 'الاسترجاع والاستبدال',
-    status: 'pending',
-    summary: 'سياسة الاسترجاع والاستبدال لم تُعتمد بعد. يرجى الاستفسار من المتجر قبل تأكيد الطلب.',
-    sections: [],
-    updatedAt: '2026-11-01',
+    status: 'approved',
+    summary: `يحق لك استبدال المنتج أو إرجاعه خلال 14 يومًا من الاستلام، ${CONSUMER_LAW_REFERENCE}.`,
+    sections: [
+      {
+        heading: 'الاستبدال والاسترجاع',
+        body: [...RETURN_POLICY_TERMS],
+      },
+    ],
+    updatedAt: '2026-11-05',
   },
   {
     slug: 'warranty',

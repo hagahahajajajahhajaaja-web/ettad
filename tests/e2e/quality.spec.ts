@@ -51,7 +51,8 @@ test.describe('SEO', () => {
     const sitemap = await (await request.get('/sitemap.xml')).text();
     expect(sitemap).toContain(`/products/${WASHER.id}/`);
     expect(sitemap).toContain('/shop/hand-tools/');
-    expect(sitemap).not.toContain('/policies/returns/');
+    expect(sitemap).toContain('/policies/returns/');
+    expect(sitemap).not.toContain('/policies/warranty/');
     const robots = await (await request.get('/robots.txt')).text();
     expect(robots).toContain('Disallow: /checkout/');
     expect(robots).toContain('Sitemap:');

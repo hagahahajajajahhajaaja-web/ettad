@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
 import path from 'node:path';
-import { DELIVERY_REFUSAL_TERM } from '@/config/terms';
+import { DELIVERY_REFUSAL_TERM, RETURN_POLICY_TERMS } from '@/config/terms';
 import { describe, expect, it } from 'vitest';
 import { categories } from '@/data/categories';
 import { products } from '@/data/products';
@@ -158,9 +158,13 @@ describe('بيانات الكتالوج', () => {
       expect(() => policySchema.parse(policy)).not.toThrow();
       if (policy.status === 'pending') expect(policy.sections).toHaveLength(0);
     }
-    for (const slug of ['returns', 'warranty']) {
-      expect(policies.find((p) => p.slug === slug)?.status).toBe('pending');
-    }
+    expect(policies.find((p) => p.slug === 'warranty')?.status).toBe('pending');
+    // الاسترجاع: نص قانون حماية المستهلك (14 يومًا بلا تكلفة إضافية) فقط، بدون شروط إضافية
+    const returns = policies.find((p) => p.slug === 'returns')!;
+    expect(returns.status).toBe('approved');
+    expect(returns.sections.flatMap((s) => s.body)).toEqual([...RETURN_POLICY_TERMS]);
+    expect(RETURN_POLICY_TERMS[0]).toContain('14 يومًا');
+    expect(RETURN_POLICY_TERMS[0]).toContain('دون أي تكلفة إضافية');
     // سياسة التوصيل: البند الوحيد المعتمد من صاحب المتجر هو تحمل قيمة التوصيل عند عدم الاستلام
     const delivery = policies.find((p) => p.slug === 'delivery')!;
     expect(delivery.status).toBe('approved');

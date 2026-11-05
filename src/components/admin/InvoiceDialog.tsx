@@ -8,7 +8,7 @@ import { ProductName } from '@/components/product/ProductName';
 import { Icon } from '@/components/ui/Icon';
 import { useNotify } from '@/components/ui/Notices';
 import { siteConfig } from '@/config/site';
-import { ORDER_TERMS } from '@/config/terms';
+import { CONSUMER_LAW_REFERENCE, INVOICE_TERMS } from '@/config/terms';
 import { countPieces, formatKwd } from '@/lib/format';
 import { formatInvoiceDate, invoiceIsPriced, invoiceLines, invoiceWhatsAppText } from '@/lib/order/invoice';
 import { paymentStatusLabels, type OrderRecord, type PaymentStatus } from '@/lib/order/status';
@@ -231,10 +231,11 @@ export function InvoiceSheet({ order }: { order: OrderRecord }) {
 
       <section aria-labelledby="invoice-terms" className="mx-6 border-t-2 border-ink py-4 sm:mx-10">
         <h3 id="invoice-terms" className="text-sm font-black">
-          الشروط
+          الشروط وسياسة الاستبدال والاسترجاع
         </h3>
+        <p className="mt-0.5 text-xs text-steel-700">{CONSUMER_LAW_REFERENCE}</p>
         <ol className="mt-2 list-decimal space-y-1 ps-5 text-sm leading-6 text-steel-700">
-          {ORDER_TERMS.map((term) => (
+          {INVOICE_TERMS.map((term) => (
             <li key={term}>{term}</li>
           ))}
         </ol>

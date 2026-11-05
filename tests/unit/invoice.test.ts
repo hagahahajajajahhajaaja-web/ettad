@@ -40,8 +40,10 @@ describe('الفاتورة', () => {
     expect(text).toContain('الإجمالي: 85.000');
     expect(text).toContain('حالة الدفع: غير مدفوع');
     expect(text).not.toContain('سري');
-    expect(text).toContain('الشروط:');
-    expect(text).toContain('يتحمل العميل قيمة التوصيل');
+    expect(text).toContain('قانون حماية المستهلك الكويتي رقم 39 لسنة 2014');
+    expect(text).toContain('خلال 14 يومًا من تاريخ الاستلام');
+    expect(text).toContain('يتحمل العميل رسوم التوصيل');
+    expect(text).not.toContain('طريقة الدفع');
     expect(invoiceWhatsAppText({ ...base, paymentStatus: 'paid', paidAt: base.createdAt })).toContain('حالة الدفع: مدفوع');
   });
 });
