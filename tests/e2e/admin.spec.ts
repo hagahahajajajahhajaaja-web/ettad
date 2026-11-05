@@ -96,6 +96,7 @@ test.describe('لوحة التحكم', () => {
     await expect(invoice).toContainText('الجابرية، قطعة 4، شارع 12، 30');
     await expect(invoice.getByRole('row').filter({ hasText: COMPRESSOR.name })).toContainText('17.500 د.ك');
     await expect(invoice.getByLabel('حالة الدفع: غير مدفوع')).toBeVisible();
+    await expect(invoice.getByRole('region', { name: 'الشروط' })).toContainText('يتحمل العميل قيمة التوصيل');
     await expect(invoice.getByRole('link', { name: 'إرسال للعميل واتساب' })).toHaveAttribute('href', /wa\.me\/96566554433\?text=.*%D9%81%D8%A7%D8%AA%D9%88%D8%B1%D8%A9/);
     await invoice.getByRole('button', { name: 'تسجيل كمدفوع' }).click();
     await expect(invoice.getByLabel('حالة الدفع: مدفوع')).toBeVisible();

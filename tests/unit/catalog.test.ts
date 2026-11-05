@@ -1,5 +1,6 @@
 import { existsSync } from 'node:fs';
 import path from 'node:path';
+import { DELIVERY_REFUSAL_TERM } from '@/config/terms';
 import { describe, expect, it } from 'vitest';
 import { categories } from '@/data/categories';
 import { products } from '@/data/products';
@@ -157,8 +158,12 @@ describe('بيانات الكتالوج', () => {
       expect(() => policySchema.parse(policy)).not.toThrow();
       if (policy.status === 'pending') expect(policy.sections).toHaveLength(0);
     }
-    for (const slug of ['returns', 'delivery', 'warranty']) {
+    for (const slug of ['returns', 'warranty']) {
       expect(policies.find((p) => p.slug === slug)?.status).toBe('pending');
     }
+    // سياسة التوصيل: البند الوحيد المعتمد من صاحب المتجر هو تحمل قيمة التوصيل عند عدم الاستلام
+    const delivery = policies.find((p) => p.slug === 'delivery')!;
+    expect(delivery.status).toBe('approved');
+    expect(delivery.sections.flatMap((s) => s.body)).toEqual([DELIVERY_REFUSAL_TERM]);
   });
 });
