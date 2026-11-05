@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useCart, type CartLine } from '@/components/cart/CartProvider';
 import { useLiveCatalog } from '@/components/catalog/LiveCatalog';
 import { OrderTotalsBox } from '@/components/cart/OrderSummary';
+import { DELIVERY_REFUSAL_TERM } from '@/config/terms';
 import { Icon } from '@/components/ui/Icon';
 import { useNotify } from '@/components/ui/Notices';
 import { kuwaitAreaSuggestions } from '@/data/kuwait-areas';
@@ -267,6 +268,10 @@ function CheckoutForm({
                   : 'تأكد من المنتجات والبيانات. عند الضغط على زر الإرسال سيفتح واتساب برسالة جاهزة إلى رقم المتجر، ويمكنك مراجعتها قبل إرسالها.'}
               </p>
               <ReviewDetails customer={customer} lines={lines} />
+              <p className="mt-4 flex items-start gap-2 border-s-4 border-orange bg-orange-50 p-3 text-sm leading-6 font-bold">
+                <Icon name="info" className="mt-0.5 size-4 shrink-0" />
+                {DELIVERY_REFUSAL_TERM}
+              </p>
               {submitError ? (
                 <div role="alert" className="mt-5 flex items-start gap-3 border-2 border-danger bg-danger-50 p-4 font-bold text-danger">
                   <Icon name="alert" className="mt-0.5 size-5 shrink-0" />

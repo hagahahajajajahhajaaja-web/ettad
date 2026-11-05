@@ -1,3 +1,4 @@
+import { DELIVERY_REFUSAL_TERM } from '@/config/terms';
 import type { Policy } from '@/lib/schema';
 
 /**
@@ -73,10 +74,15 @@ export const policies: Policy[] = [
   {
     slug: 'delivery',
     title: 'سياسة التوصيل',
-    status: 'pending',
-    summary: 'رسوم ومدد ومناطق التوصيل لم تُعتمد بعد. يتم الاتفاق على تفاصيل التوصيل مع المتجر عند تأكيد الطلب.',
-    sections: [],
-    updatedAt: '2026-11-01',
+    status: 'approved',
+    summary: 'يتم الاتفاق على موعد التوصيل مع المتجر عند تأكيد الطلب. رسوم ومدد ومناطق التوصيل لم تُعتمد بعد.',
+    sections: [
+      {
+        heading: 'عدم استلام الطلب',
+        body: [DELIVERY_REFUSAL_TERM],
+      },
+    ],
+    updatedAt: '2026-11-05',
   },
   {
     slug: 'returns',

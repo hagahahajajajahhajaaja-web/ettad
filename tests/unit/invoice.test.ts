@@ -40,6 +40,8 @@ describe('الفاتورة', () => {
     expect(text).toContain('الإجمالي: 85.000');
     expect(text).toContain('حالة الدفع: غير مدفوع');
     expect(text).not.toContain('سري');
+    expect(text).toContain('الشروط:');
+    expect(text).toContain('يتحمل العميل قيمة التوصيل');
     expect(invoiceWhatsAppText({ ...base, paymentStatus: 'paid', paidAt: base.createdAt })).toContain('حالة الدفع: مدفوع');
   });
 });

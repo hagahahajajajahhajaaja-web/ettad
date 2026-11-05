@@ -1,3 +1,4 @@
+import { ORDER_TERMS } from '@/config/terms';
 import { formatKwd } from '@/lib/format';
 import { formatKuwaitPhone } from '@/lib/phone';
 import { paymentStatusLabels, type OrderRecord } from '@/lib/order/status';
@@ -48,6 +49,7 @@ export function invoiceWhatsAppText(order: OrderRecord): string {
   }
   lines.push('', `الإجمالي: ${order.totalFils === null ? 'يُحدد عند التأكيد' : formatKwd(order.totalFils)}`);
   lines.push(`حالة الدفع: ${paymentStatusLabels[order.paymentStatus]}`);
+  lines.push('', 'الشروط:', ...ORDER_TERMS.map((term, i) => `${i + 1}. ${term}`));
   lines.push('', 'شكرًا لطلبك من عتاد.');
   return lines.join('\n');
 }
