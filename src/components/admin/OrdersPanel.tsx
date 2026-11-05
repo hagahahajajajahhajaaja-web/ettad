@@ -2,11 +2,12 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { adminApi } from '@/components/admin/api';
+import { InvoiceDialog } from '@/components/admin/InvoiceDialog';
 import { ProductName } from '@/components/product/ProductName';
 import { Icon } from '@/components/ui/Icon';
 import { useNotify } from '@/components/ui/Notices';
 import { countPieces, formatKwd, PRICE_ON_REQUEST } from '@/lib/format';
-import { ORDER_STATUSES, orderStatusLabels, type OrderRecord, type OrderStatus } from '@/lib/order/status';
+import { ORDER_STATUSES, PAYMENT_STATUSES, orderStatusLabels, paymentStatusLabels, type OrderRecord, type OrderStatus, type PaymentStatus } from '@/lib/order/status';
 import { formatKuwaitPhone } from '@/lib/phone';
 
 const POLL_MS = 20_000;
@@ -217,9 +218,17 @@ function FilterChip({ active, onClick, label, count }: { active: boolean; onClic
 function OrderCard({ order, onSaved, onError }: { order: OrderRecord; onSaved: (o: OrderRecord) => void; onError: (e: unknown) => void }) {
   const [status, setStatus] = useState<OrderStatus>(order.status);
   const [note, setNote] = useState(order.adminNote);
+  const [payment, setPayment] = useState<PaymentStatus>(order.paymentStatus);
   const [busy, setBusy] = useState(false);
+  const [invoiceOpen, setInvoiceOpen] = useState(false);
   const notify = useNotify();
-  const dirty = status !== order.status || note !== order.adminNote;
+  const dirty = status !== order.status || note !== order.adminNote || payment !== order.paymentStatus;
+  // تسجيل الدفع من نافذة الفاتورة يحدّث الطلب — نزامن الحقل حتى لا يبقى بقيمة قديمة
+  const [syncedPayment, setSyncedPayment] = useState(order.paymentStatus);
+  if (syncedPayment !== order.paymentStatus) {
+    setSyncedPayment(order.paymentStatus);
+    setPayment(order.paymentStatus);
+  }
   const phoneIntl = `965${order.customer.phone}`;
   const waText = `مرحبًا ${order.customer.name}، معك متجر عتاد بخصوص طلبك رقم ${order.id}.`;
 
@@ -232,8 +241,20 @@ function OrderCard({ order, onSaved, onError }: { order: OrderRecord; onSaved: (
           </h2>
           <p className="text-sm text-steel-700">{dateFormat.format(order.createdAt)}</p>
         </div>
-        <span className={`px-2 py-1 text-sm font-black ${statusTone[order.status]}`}>{orderStatusLabels[order.status]}</span>
+        <div className="flex flex-wrap items-center gap-2">
+          <span
+            className={`border-2 px-2 py-0.5 text-sm font-black ${order.paymentStatus === 'paid' ? 'border-success bg-success-50 text-success' : 'border-orange text-orange-ink'}`}
+          >
+            {paymentStatusLabels[order.paymentStatus]}
+          </span>
+          <span className={`px-2 py-1 text-sm font-black ${statusTone[order.status]}`}>{orderStatusLabels[order.status]}</span>
+          <button type="button" onClick={() => setInvoiceOpen(true)} className="btn-dark min-h-10 px-3 text-sm">
+            <Icon name="receipt" className="size-4" />
+            الفاتورة
+          </button>
+        </div>
       </header>
+      {invoiceOpen ? <InvoiceDialog order={order} onClose={() => setInvoiceOpen(false)} onSaved={onSaved} onError={onError} /> : null}
 
       <div className="grid gap-4 p-4 md:grid-cols-2">
         <div className="space-y-2">
@@ -277,12 +298,12 @@ function OrderCard({ order, onSaved, onError }: { order: OrderRecord; onSaved: (
       </div>
 
       <form
-        className="grid gap-3 border-t border-line bg-paper p-4 md:grid-cols-[12rem_1fr_auto] md:items-end"
+        className="grid gap-3 border-t border-line bg-paper p-4 md:grid-cols-[10rem_10rem_1fr_auto] md:items-end"
         onSubmit={async (e) => {
           e.preventDefault();
           setBusy(true);
           try {
-            const { order: updated } = await adminApi.updateOrder(order.id, { status, adminNote: note });
+            const { order: updated } = await adminApi.updateOrder(order.id, { status, adminNote: note, paymentStatus: payment });
             notify({ tone: 'success', message: `حُفظ الطلب ${order.id}.` });
             onSaved(updated);
           } catch (error) {
@@ -300,6 +321,18 @@ function OrderCard({ order, onSaved, onError }: { order: OrderRecord; onSaved: (
             {ORDER_STATUSES.map((s) => (
               <option key={s} value={s}>
                 {orderStatusLabels[s]}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label htmlFor={`payment-${order.id}`} className="field-label">
+            الدفع
+          </label>
+          <select id={`payment-${order.id}`} value={payment} onChange={(e) => setPayment(e.target.value as PaymentStatus)} className="field-input">
+            {PAYMENT_STATUSES.map((p) => (
+              <option key={p} value={p}>
+                {paymentStatusLabels[p]}
               </option>
             ))}
           </select>

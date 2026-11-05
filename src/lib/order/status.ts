@@ -14,6 +14,19 @@ export function isOrderStatus(value: unknown): value is OrderStatus {
   return typeof value === 'string' && (ORDER_STATUSES as readonly string[]).includes(value);
 }
 
+/** حالة الدفع — يحددها صاحب المتجر من لوحة التحكم (الموقع لا يستلم أي دفع). */
+export const PAYMENT_STATUSES = ['unpaid', 'paid'] as const;
+export type PaymentStatus = (typeof PAYMENT_STATUSES)[number];
+
+export const paymentStatusLabels: Record<PaymentStatus, string> = {
+  unpaid: 'غير مدفوع',
+  paid: 'مدفوع',
+};
+
+export function isPaymentStatus(value: unknown): value is PaymentStatus {
+  return typeof value === 'string' && (PAYMENT_STATUSES as readonly string[]).includes(value);
+}
+
 /** شكل الطلب كما تعيده الواجهة البرمجية. */
 export type OrderLineRecord = {
   id: string;
@@ -33,6 +46,9 @@ export type OrderRecord = {
   itemCount: number;
   totalFils: number | null;
   adminNote: string;
+  paymentStatus: PaymentStatus;
+  /** وقت تسجيل الدفع (null إذا غير مدفوع). */
+  paidAt: number | null;
   history: { at: number; status: OrderStatus; by: 'customer' | 'admin' }[];
 };
 

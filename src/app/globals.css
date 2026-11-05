@@ -170,3 +170,38 @@
 @utility field-hint {
   @apply mt-1.5 text-sm text-steel-700;
 }
+
+/* طباعة الفاتورة من لوحة التحكم: تُطبع ورقة الفاتورة فقط */
+@media print {
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+  body:has(#invoice-print-root) {
+    background: #fff !important;
+  }
+  body:has(#invoice-print-root) > *:not(#invoice-print-root) {
+    display: none !important;
+  }
+  #invoice-print-root {
+    position: static !important;
+    overflow: visible !important;
+    background: #fff !important;
+  }
+  #invoice-print-root .no-print {
+    display: none !important;
+  }
+  #invoice-print-root .invoice-page {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+  #invoice-print-root .invoice-sheet {
+    box-shadow: none;
+  }
+  #invoice-print-root,
+  #invoice-print-root * {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}
