@@ -53,7 +53,7 @@ describe('الواجهة العامة', () => {
     const { data } = await call(env, '/api/catalog');
     expect(data.products[WASHER]).toEqual({ priceFils: 35000, availability: 'unconfirmed' });
     expect(data.products[DRILL]).toEqual({ priceFils: null, availability: 'unconfirmed' });
-    expect(Object.keys(data.products)).toHaveLength(10);
+    expect(Object.keys(data.products)).toHaveLength(11);
   });
 
   it('بدون قاعدة بيانات: رسالة واضحة 503', async () => {

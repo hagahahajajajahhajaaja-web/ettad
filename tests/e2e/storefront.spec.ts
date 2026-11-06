@@ -84,7 +84,7 @@ test.describe('البحث والتصفية', () => {
     await search.press('Enter');
     await expect(page.getByText('لم نجد منتجات مطابقة')).toBeVisible();
     await page.getByRole('button', { name: 'مسح البحث' }).click();
-    await expect(page.locator('#results-heading')).toContainText('10 منتجات');
+    await expect(page.locator('#results-heading')).toContainText('11 منتجًا');
   });
 
   test('التصفية حسب القسم', async ({ page }) => {
@@ -105,8 +105,8 @@ test.describe('البحث والتصفية', () => {
     await page.getByText('تصفية حسب السعر').click();
     await page.locator('#price-min').fill('25');
     await page.getByRole('button', { name: 'تطبيق السعر' }).click();
-    // 35 + 30 + 25 + 30
-    await expect(page.locator('#results-heading')).toContainText('4 منتجات');
+    // 35 + 30 + 25 + 29 (شنطة العدة) + 30
+    await expect(page.locator('#results-heading')).toContainText('5 منتجات');
     await expect(page.getByRole('heading', { name: DRILL.name })).toHaveCount(0);
   });
 
@@ -156,7 +156,7 @@ test.describe('صفحة المنتج', () => {
   test('شنطة العدة: صورها وسعرها، بلا قوائم داخلية', async ({ page }) => {
     await page.goto(`/products/${TOOLCASE.id}/`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(TOOLCASE.name);
-    await expect(page.locator('main').getByText('22.000 د.ك').first()).toBeVisible();
+    await expect(page.locator('main').getByText('29.000 د.ك').first()).toBeVisible();
     await expect(page.getByRole('heading', { name: 'المواصفات', exact: true })).toBeVisible();
     await expect(page.getByRole('list', { name: 'الصور المصغرة' }).getByRole('button')).toHaveCount(2);
     // كل المنتجات صار لها صور، فلا يظهر البديل

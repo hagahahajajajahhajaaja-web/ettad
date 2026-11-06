@@ -127,6 +127,38 @@
       "og": "/images/products/boss-cordless-impact-wrench-kit/01-og.jpg"
     }
   ],
+  "car-jump-starter-6in1": [
+    {
+      "base": "/images/products/car-jump-starter-6in1/01",
+      "width": 576,
+      "height": 1024,
+      "widths": [
+        480,
+        576
+      ],
+      "og": "/images/products/car-jump-starter-6in1/01-og.jpg"
+    },
+    {
+      "base": "/images/products/car-jump-starter-6in1/02",
+      "width": 576,
+      "height": 1024,
+      "widths": [
+        480,
+        576
+      ],
+      "og": "/images/products/car-jump-starter-6in1/02-og.jpg"
+    },
+    {
+      "base": "/images/products/car-jump-starter-6in1/03",
+      "width": 576,
+      "height": 1024,
+      "widths": [
+        480,
+        576
+      ],
+      "og": "/images/products/car-jump-starter-6in1/03-og.jpg"
+    }
+  ],
   "gs-lztop-94pc-socket-set": [
     {
       "base": "/images/products/gs-lztop-94pc-socket-set/01",
