@@ -105,8 +105,8 @@ test.describe('البحث والتصفية', () => {
     await page.getByText('تصفية حسب السعر').click();
     await page.locator('#price-min').fill('25');
     await page.getByRole('button', { name: 'تطبيق السعر' }).click();
-    // 35 + 30 + 25 + 29 (شنطة العدة) + 30
-    await expect(page.locator('#results-heading')).toContainText('5 منتجات');
+    // 26 (جامب ستارتر) + 35 + 30 + 25 + 29 (شنطة العدة) + 30
+    await expect(page.locator('#results-heading')).toContainText('6 منتجات');
     await expect(page.getByRole('heading', { name: DRILL.name })).toHaveCount(0);
   });
 
