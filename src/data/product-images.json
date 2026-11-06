@@ -130,11 +130,11 @@
   "car-jump-starter-6in1": [
     {
       "base": "/images/products/car-jump-starter-6in1/01",
-      "width": 576,
-      "height": 1024,
+      "width": 645,
+      "height": 645,
       "widths": [
         480,
-        576
+        645
       ],
       "og": "/images/products/car-jump-starter-6in1/01-og.jpg"
     },
@@ -157,6 +157,16 @@
         576
       ],
       "og": "/images/products/car-jump-starter-6in1/03-og.jpg"
+    },
+    {
+      "base": "/images/products/car-jump-starter-6in1/04",
+      "width": 576,
+      "height": 1024,
+      "widths": [
+        480,
+        576
+      ],
+      "og": "/images/products/car-jump-starter-6in1/04-og.jpg"
     }
   ],
   "gs-lztop-94pc-socket-set": [
