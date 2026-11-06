@@ -35,7 +35,8 @@ describe('البحث', () => {
     expect(find('حقيبة')).toEqual(['rolling-tool-case-kit']);
     expect(find('بوكسات')).toEqual(['boss-94pc-socket-wrench-set', 'gs-lztop-94pc-socket-set']);
     expect(find('لقم')).toEqual(['boss-94pc-socket-wrench-set', 'gs-lztop-94pc-socket-set']);
-    expect(find('منفاخ')).toEqual(['boss-12v-tire-compressor']);
+    expect(find('منفاخ')).toEqual(['car-jump-starter-6in1', 'boss-12v-tire-compressor']);
+    expect(find('جامب ستارتر')).toEqual(['car-jump-starter-6in1']);
   });
 
   it('يجد بالعلامة والموديل بصيغ مختلفة', () => {
