@@ -108,7 +108,7 @@ describe('بيانات الكتالوج', () => {
       'boss-94pc-socket-wrench-set': 2,
       'gs-lztop-94pc-socket-set': 1,
       'rolling-tool-case-kit': 2,
-      'car-jump-starter-6in1': 3,
+      'car-jump-starter-6in1': 4,
       'gulfik-brushless-impact-wrench-kit': 2,
       'boss-12v-tire-compressor': 1,
     });
