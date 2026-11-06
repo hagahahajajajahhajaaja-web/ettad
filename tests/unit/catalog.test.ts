@@ -39,7 +39,7 @@ describe('بيانات الكتالوج', () => {
       'boss-94pc-socket-wrench-set': 20000,
       'gs-lztop-94pc-socket-set': 15000,
       'rolling-tool-case-kit': 29000, // عدّله صاحب المتجر (2026-11-06)
-      'car-jump-starter-6in1': 14500, // سعر صاحب المتجر (2026-11-06)
+      'car-jump-starter-6in1': 26000, // سعر صاحب المتجر (2026-11-06)
       'gulfik-brushless-impact-wrench-kit': 30000,
       'boss-12v-tire-compressor': 17000,
     };
