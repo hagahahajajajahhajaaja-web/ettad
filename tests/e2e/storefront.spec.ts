@@ -84,7 +84,7 @@ test.describe('البحث والتصفية', () => {
     await search.press('Enter');
     await expect(page.getByText('لم نجد منتجات مطابقة')).toBeVisible();
     await page.getByRole('button', { name: 'مسح البحث' }).click();
-    await expect(page.locator('#results-heading')).toContainText('11 منتجًا');
+    await expect(page.locator('#results-heading')).toContainText('12 منتجًا');
   });
 
   test('التصفية حسب القسم', async ({ page }) => {

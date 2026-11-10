@@ -7,6 +7,7 @@ export const IMPACT = { id: 'gulfik-brushless-impact-wrench-kit', name: 'مفت�
 /** المنتج الوحيد بدون سعر معتمد بعد. */
 export const DRILL = { id: 'gulfik-brushless-drill-kit', name: 'طقم دريل لاسلكي GULFIK بمحرك Brushless' };
 export const ALL_PRODUCT_IDS = [
+  'himk-mk326-jump-starter-inflator',
   'car-jump-starter-6in1',
   'boss-bs-300f-pressure-washer',
   'boss-bs-2070-pressure-washer',
