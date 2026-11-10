@@ -14,6 +14,7 @@ const visibleText = (p: ReturnType<typeof getAllProducts>[number]) =>
 describe('بيانات الكتالوج', () => {
   it('تحتوي المنتجات بالترتيب والأقسام الصحيحة', () => {
     expect(getAllProducts().map((p) => [p.id, p.categoryId])).toEqual([
+      ['himk-mk326-jump-starter-inflator', 'car-tools'],
       ['car-jump-starter-6in1', 'car-tools'],
       ['boss-bs-300f-pressure-washer', 'washing-cleaning'],
       ['boss-bs-2070-pressure-washer', 'washing-cleaning'],
@@ -39,6 +40,7 @@ describe('بيانات الكتالوج', () => {
       'boss-94pc-socket-wrench-set': 20000,
       'gs-lztop-94pc-socket-set': 15000,
       'rolling-tool-case-kit': 29000, // عدّله صاحب المتجر (2026-11-06)
+      'himk-mk326-jump-starter-inflator': 18000, // سعر صاحب المتجر (2026-11-10)
       'car-jump-starter-6in1': 26000, // سعر صاحب المتجر (2026-11-06)
       'gulfik-brushless-impact-wrench-kit': 30000,
       'boss-12v-tire-compressor': 17000,
@@ -57,7 +59,7 @@ describe('بيانات الكتالوج', () => {
   it('مفاتيح التواير تُسمى «مفتاح تواير السيارة» بدون «بلكات» أو «صدمات» (طلب صاحب المتجر)', () => {
     for (const product of getAllProducts()) expect(visibleText(product), product.id).not.toMatch(/بلكات|صدمات/);
     const names = getAllProducts().filter((p) => p.categoryId === 'car-tools').map((p) => p.name);
-    expect(names).toEqual(['جهاز تشغيل السيارة 6 في 1 (جامب ستارتر)', 'مفتاح تواير السيارة GULFIK', 'مفتاح تواير السيارة BOSS', 'منفاخ إطارات محمول 12 فولت BOSS']);
+    expect(names).toEqual(['بطارية الطوارئ 4 في 1 HiMK MK-326', 'جهاز تشغيل السيارة 6 في 1 (جامب ستارتر)', 'مفتاح تواير السيارة GULFIK', 'مفتاح تواير السيارة BOSS', 'منفاخ إطارات محمول 12 فولت BOSS']);
   });
 
   it('لكل منتج سطر استخدام قصير وقائمة استخدامات', () => {
@@ -109,6 +111,7 @@ describe('بيانات الكتالوج', () => {
       'gs-lztop-94pc-socket-set': 1,
       'rolling-tool-case-kit': 2,
       'car-jump-starter-6in1': 4,
+      'himk-mk326-jump-starter-inflator': 1,
       'gulfik-brushless-impact-wrench-kit': 2,
       'boss-12v-tire-compressor': 1,
     });

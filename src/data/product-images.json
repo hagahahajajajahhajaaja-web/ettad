@@ -219,6 +219,18 @@
       "og": "/images/products/gulfik-brushless-impact-wrench-kit/02-og.jpg"
     }
   ],
+  "himk-mk326-jump-starter-inflator": [
+    {
+      "base": "/images/products/himk-mk326-jump-starter-inflator/01",
+      "width": 960,
+      "height": 1005,
+      "widths": [
+        480,
+        960
+      ],
+      "og": "/images/products/himk-mk326-jump-starter-inflator/01-og.jpg"
+    }
+  ],
   "rolling-tool-case-kit": [
     {
       "base": "/images/products/rolling-tool-case-kit/01",
